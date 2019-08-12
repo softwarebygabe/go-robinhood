@@ -80,6 +80,6 @@ func (c *Client) GetHistoricals(instrument Instrument) (Historical, error) {
 	defaultOpts := DefaultHistoricalOptions()
 	queryString := "?interval=" + defaultOpts.Interval + "&bounds=" + defaultOpts.Bounds + "&span=" + defaultOpts.Span
 	var h Historical
-	err := c.GetAndDecode(EPHistoricals+instrument.ID+queryString, &h)
+	err := c.GetAndDecode(EPHistoricals+instrument.ID+"/"+queryString, &h)
 	return h, err
 }

@@ -27,6 +27,7 @@ const (
 	EPOptions      = EPBase + "options/"
 	EPMarket       = EPBase + "marketdata/"
 	EPOptionQuote  = EPMarket + "options/"
+	EPHistoricals  = EPMarket + "historicals/"
 )
 
 // A Client is a helpful abstraction around some common metadata required for

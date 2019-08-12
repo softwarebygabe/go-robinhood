@@ -78,6 +78,7 @@ func (e ErrorMap) Error() string {
 // DoAndDecode provides useful abstractions around common errors and decoding
 // issues.
 func (c *Client) DoAndDecode(req *http.Request, dest interface{}) error {
+	fmt.Printf("making %s request to %s ...\n", req.Method, req.URL.RequestURI())
 	res, err := c.Do(req)
 	if err != nil {
 		return err

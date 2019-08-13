@@ -17,6 +17,8 @@ const (
 	MinClose           = HrClose * 60
 	MinRHExtendedClose = HrRHExtendedClose * 60
 	MinExtendedClose   = HrExtendedClose * 60
+
+	RHTimeFormat = time.RFC3339
 )
 
 // MinuteOfDay returns the minute of the day for a given time.Time (hr * 60 +
@@ -124,4 +126,10 @@ func NextRobinhoodExtendedClose() time.Time {
 // open.
 func NextMarketExtendedClose() time.Time {
 	return nextWeekdayHourMinuteNY(HrRHExtendedClose, 00)
+}
+
+// ParseRHTime takes a stringified time value from the Robinhood API
+// and converts it to a Golang time object.
+func ParseRHTime(rhtime string) (time.Time, error) {
+	return time.Parse(RHTimeFormat, rhtime)
 }

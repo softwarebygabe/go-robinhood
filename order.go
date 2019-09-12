@@ -40,6 +40,11 @@ const (
 	Limit
 )
 
+const (
+	OrderStateUnconfirmed = "unconfirmed"
+	OrderStateFilled      = "filled"
+)
+
 // OrderOpts encapsulates differences between order types
 type OrderOpts struct {
 	Side          OrderSide
@@ -111,32 +116,42 @@ func (c *Client) Order(i *Instrument, o OrderOpts) (*OrderOutput, error) {
 	return &out, nil
 }
 
+// OrderExecution is the object robinhood uses to define a single execution.
+// A single order may require several executions to be filled.
+type OrderExecution struct {
+	ID             string  `json:"id"`
+	Price          float64 `json:"price,string"`
+	Quantity       string  `json:"quantity"`
+	SettlementDate string  `json:"settlement_date"`
+	Timestamp      string  `json:"timestamp"`
+}
+
 // OrderOutput is the response from the Order api
 type OrderOutput struct {
 	Meta
-	Account                string        `json:"account"`
-	AveragePrice           float64       `json:"average_price,string"`
-	CancelURL              string        `json:"cancel"`
-	CreatedAt              string        `json:"created_at"`
-	CumulativeQuantity     string        `json:"cumulative_quantity"`
-	Executions             []interface{} `json:"executions"`
-	ExtendedHours          bool          `json:"extended_hours"`
-	Fees                   string        `json:"fees"`
-	ID                     string        `json:"id"`
-	Instrument             string        `json:"instrument"`
-	LastTransactionAt      string        `json:"last_transaction_at"`
-	OverrideDayTradeChecks bool          `json:"override_day_trade_checks"`
-	OverrideDtbpChecks     bool          `json:"override_dtbp_checks"`
-	Position               string        `json:"position"`
-	Price                  float64       `json:"price,string"`
-	Quantity               string        `json:"quantity"`
-	RejectReason           string        `json:"reject_reason"`
-	Side                   string        `json:"side"`
-	State                  string        `json:"state"`
-	StopPrice              float64       `json:"stop_price,string"`
-	TimeInForce            string        `json:"time_in_force"`
-	Trigger                string        `json:"trigger"`
-	Type                   string        `json:"type"`
+	Account                string           `json:"account"`
+	AveragePrice           float64          `json:"average_price,string"`
+	CancelURL              string           `json:"cancel"`
+	CreatedAt              string           `json:"created_at"`
+	CumulativeQuantity     string           `json:"cumulative_quantity"`
+	Executions             []OrderExecution `json:"executions"`
+	ExtendedHours          bool             `json:"extended_hours"`
+	Fees                   string           `json:"fees"`
+	ID                     string           `json:"id"`
+	Instrument             string           `json:"instrument"`
+	LastTransactionAt      string           `json:"last_transaction_at"`
+	OverrideDayTradeChecks bool             `json:"override_day_trade_checks"`
+	OverrideDtbpChecks     bool             `json:"override_dtbp_checks"`
+	Position               string           `json:"position"`
+	Price                  float64          `json:"price,string"`
+	Quantity               string           `json:"quantity"`
+	RejectReason           string           `json:"reject_reason"`
+	Side                   string           `json:"side"`
+	State                  string           `json:"state"`
+	StopPrice              float64          `json:"stop_price,string"`
+	TimeInForce            string           `json:"time_in_force"`
+	Trigger                string           `json:"trigger"`
+	Type                   string           `json:"type"`
 
 	client *Client
 }

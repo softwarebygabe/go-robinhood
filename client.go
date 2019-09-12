@@ -94,7 +94,7 @@ func (c *Client) DoAndDecode(req *http.Request, dest interface{}) error {
 		}
 		return e
 	}
-
+	fmt.Printf("%d response received.\n", res.StatusCode)
 	return json.NewDecoder(res.Body).Decode(dest)
 }
 

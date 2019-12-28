@@ -10,6 +10,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/blend/go-sdk/logger"
+
 	"golang.org/x/oauth2"
 )
 
@@ -35,7 +37,22 @@ const (
 type Client struct {
 	Token   string
 	Account *Account
+	log     *logger.Logger
 	*http.Client
+}
+
+// NewClient returns a client with the provided options set
+func NewClient(httpClient *http.Client, opts ...ClientOption) (*Client, error) {
+	c := &Client{
+		Client: httpClient,
+	}
+	// set the client options
+	for _, opt := range opts {
+		if err := opt(c); err != nil {
+			return nil, err
+		}
+	}
+	return c, nil
 }
 
 // Dial returns a client given a TokenGetter. TokenGetter implementations are
@@ -78,7 +95,7 @@ func (e ErrorMap) Error() string {
 // DoAndDecode provides useful abstractions around common errors and decoding
 // issues.
 func (c *Client) DoAndDecode(req *http.Request, dest interface{}) error {
-	fmt.Printf("making %s request to %s ...\n", req.Method, req.URL.RequestURI())
+	c.MaybeInfof("making %s request to %s ...\n", req.Method, req.URL.RequestURI())
 	res, err := c.Do(req)
 	if err != nil {
 		return err
@@ -94,8 +111,15 @@ func (c *Client) DoAndDecode(req *http.Request, dest interface{}) error {
 		}
 		return e
 	}
-	fmt.Printf("%d response received.\n", res.StatusCode)
+	c.MaybeInfof("%d response received.\n", res.StatusCode)
 	return json.NewDecoder(res.Body).Decode(dest)
+}
+
+// MaybeInfof logs if the client logger is set
+func (c *Client) MaybeInfof(format string, args ...interface{}) {
+	if c.log != nil {
+		c.log.Infof(format, args...)
+	}
 }
 
 // Meta holds metadata common to many RobinHood types.

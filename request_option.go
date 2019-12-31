@@ -1,6 +1,17 @@
 package robinhood
 
-import "net/http"
+import (
+	"net/http"
 
-// RequestOption is a modifier for a Request
-type RequestOption func(*http.Request) error
+	"github.com/blend/go-sdk/webutil"
+)
+
+// ApplyRequestOptions ...
+func ApplyRequestOptions(req *http.Request, options ...webutil.RequestOption) error {
+	for _, opt := range options {
+		if err := opt(req); err != nil {
+			return err
+		}
+	}
+	return nil
+}

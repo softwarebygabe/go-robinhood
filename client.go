@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/blend/go-sdk/logger"
+	"github.com/blend/go-sdk/webutil"
 
 	"golang.org/x/oauth2"
 )
@@ -70,10 +71,22 @@ func Dial(s oauth2.TokenSource) (*Client, error) {
 	return c, err
 }
 
+// NewRequest creates a new http.Request with the given options.
+func (c *Client) NewRequest(method, url string, options ...webutil.RequestOption) (*http.Request, error) {
+	req, err := http.NewRequest(method, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	if err = ApplyRequestOptions(req, options...); err != nil {
+		return nil, err
+	}
+	return req, nil
+}
+
 // GetAndDecode retrieves from the endpoint and unmarshals resulting json into
 // the provided destination interface, which must be a pointer.
 func (c *Client) GetAndDecode(url string, dest interface{}) error {
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := c.NewRequest("GET", url)
 	if err != nil {
 		return err
 	}

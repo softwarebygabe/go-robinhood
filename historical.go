@@ -97,3 +97,20 @@ func OptHistoricalsBoundsTrading() webutil.RequestOption {
 func OptHistoricalsSpanDay() webutil.RequestOption {
 	return webutil.OptQueryValue("span", "day")
 }
+
+// OptHistoricalsSpanAll sets the `span` to `all` in the request for historicals
+func OptHistoricalsSpanAll() webutil.RequestOption {
+	return webutil.OptQueryValue("span", "all")
+}
+
+// OptHistoricalsStart sets the `start` query in the request for historicals
+// The route expects the dateTime string in format: "2019-08-12T13:00:00Z"
+func OptHistoricalsStart(dateTime string) webutil.RequestOption {
+	return webutil.OptQueryValue("start", dateTime)
+}
+
+// OptHistoricalsEnd sets the `end` query in the request for historicals
+// The route expects the dateTime string in format: "2019-08-12T13:00:00Z"
+func OptHistoricalsEnd(dateTime string) webutil.RequestOption {
+	return webutil.OptQueryValue("end", dateTime)
+}

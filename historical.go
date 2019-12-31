@@ -73,7 +73,7 @@ func (c *Client) GetHistoricals(instrument Instrument, options ...webutil.Reques
 	allOptions := append(defaultOptions, options...)
 	req, err := c.NewRequest(
 		"GET",
-		EPHistoricals+instrument.ID,
+		EPHistoricals+instrument.ID+"/",
 		allOptions...,
 	)
 	if err != nil {

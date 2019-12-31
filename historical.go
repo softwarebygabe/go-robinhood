@@ -1,5 +1,9 @@
 package robinhood
 
+import (
+	"github.com/blend/go-sdk/webutil"
+)
+
 /*
 {
 	"begins_at":"2019-08-12T13:00:00Z",
@@ -57,29 +61,39 @@ type Historical struct {
 	Historicals        []Candle `json:"historicals"`
 }
 
-// HistQueryOptions are the options taken by the "historicals" API
-type HistQueryOptions struct {
-	Interval string
-	Bounds   string
-	Span     string
-}
-
-// DefaultHistoricalOptions returns default options for the "historicals" API
-// Defaults are interval=5minute, bounds=trading, span=day
-func DefaultHistoricalOptions() HistQueryOptions {
-	return HistQueryOptions{
-		Interval: "5minute",
-		Bounds:   "trading",
-		Span:     "day",
-	}
-}
-
 // GetHistoricals returns the historical candle data associated with a given instrument.
 // It utilizes the "/marketdata/historicals" API.
-func (c *Client) GetHistoricals(instrument Instrument) (Historical, error) {
-	defaultOpts := DefaultHistoricalOptions()
-	queryString := "?interval=" + defaultOpts.Interval + "&bounds=" + defaultOpts.Bounds + "&span=" + defaultOpts.Span
+func (c *Client) GetHistoricals(instrument Instrument, options ...webutil.RequestOption) (Historical, error) {
 	var h Historical
-	err := c.GetAndDecode(EPHistoricals+instrument.ID+"/"+queryString, &h)
+	defaultOptions := []webutil.RequestOption{
+		OptHistoricalsInterval5Minute(),
+		OptHistoricalsSpanDay(),
+		OptHistoricalsBoundsTrading(),
+	}
+	allOptions := append(defaultOptions, options...)
+	req, err := c.NewRequest(
+		"GET",
+		EPHistoricals+instrument.ID,
+		allOptions...,
+	)
+	if err != nil {
+		return h, err
+	}
+	err = c.DoAndDecode(req, &h)
 	return h, err
+}
+
+// OptHistoricalsInterval5Minute sets the `interval` to `5minute` in the request for historicals
+func OptHistoricalsInterval5Minute() webutil.RequestOption {
+	return webutil.OptQueryValue("interval", "5minute")
+}
+
+// OptHistoricalsBoundsTrading sets the `bounds` to `trading` in the request for historicals
+func OptHistoricalsBoundsTrading() webutil.RequestOption {
+	return webutil.OptQueryValue("bounds", "trading")
+}
+
+// OptHistoricalsSpanDay sets the `span` to `day` in the request for historicals
+func OptHistoricalsSpanDay() webutil.RequestOption {
+	return webutil.OptQueryValue("span", "day")
 }

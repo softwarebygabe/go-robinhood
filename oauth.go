@@ -20,6 +20,14 @@ type OAuth struct {
 	Endpoint, ClientID, Username, Password, MFA string
 }
 
+// NewOAuth ...
+func NewOAuth(u, p string) *OAuth {
+	return &OAuth{
+		Username: u,
+		Password: p,
+	}
+}
+
 // ErrMFARequired indicates the MFA was required but not provided.
 var ErrMFARequired = fmt.Errorf("Two Factor Auth code required and not supplied")
 

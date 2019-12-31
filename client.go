@@ -43,9 +43,10 @@ type Client struct {
 }
 
 // NewClient returns a client with the provided options set
-func NewClient(httpClient *http.Client, opts ...ClientOption) (*Client, error) {
-	c := &Client{
-		Client: httpClient,
+func NewClient(s oauth2.TokenSource, opts ...ClientOption) (*Client, error) {
+	c, err := Dial(s)
+	if err != nil {
+		return nil, err
 	}
 	// set the client options
 	for _, opt := range opts {

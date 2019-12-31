@@ -1,43 +1,44 @@
-[![GoDoc](https://godoc.org/astuart.co/go-robinhood?status.svg)](https://godoc.org/astuart.co/go-robinhood)
+# Robinhood API Golang Client
 
-# Robinhood the rich and feeding the poor, now automated
+This library is forked from [Andrew Stuart's](https://github.com/andrewstuart/go-robinhood) and builds upon the work done there, namely
+the oauth2 implementation and the characterization of a lot of the API endpoints and response types.
 
-> Even though robinhood makes me poor
-
-## Notice
-
-If you have used this library before, and use credential caching, you will need
-to remove any credential cache and rebuild if you experience errors.
+My implementation aims to add more API functionality as it becomes available from Robinhood, as well as to improve the usability
+and flexibility of the library and its functions by implementing the [Functional Options](https://github.com/tmrts/go-patterns/blob/master/idiom/functional-options.md) pattern, and utilizing all-purpose libraries like [Blend's Go SDK](https://github.com/blend/go-sdk) for
+things like logging and webutils.
 
 ## General usage
 
 ```go
-cli, err := robinhood.Dial(&robinhood.OAuth{
-  Username: "andrewstuart",
-  Password: "mypasswordissecure",
-})
+client, _ := robinhood.NewClient(
+  robinhood.NewOAuth("username", "password"),
+)
 
-//err
+instrument, _ := robinhood.GetInstrumentForSymbol("SPY")
 
-i, err := cli.GetInstrumentForSymbol("SPY")
+historicalData, _ := robinhood.GetHistoricals(
+  instrument,
+  robinhood.OptHistoricalsInterval5Minute(),
+  robinhood.OptHistoricalsSpanDay(),
+  robinhood.OptHistoricalsBoundsTrading(),
+)
 
-//err
+// Do something with the data :)
+```
 
-o, err := cli.Order(i, robinhood.OrderOpts{
-  Price: 100.0,
-  Side: robinhood.Buy,
-  Quantity: 1,
-})
+## Client Options
 
-//err
+```go
+import (
+  "github.com/blend/go-sdk/logger
+)
 
-time.Sleep(5*time.Second) //Let me think about it some more...
+logger := logger.MustNew()
 
-//Ah crap, I need to buy groceries.
+client, _ := robinhood.NewClient(
+  robinhood.NewOAuth("username", "password"),
+  robinhood.OptClientLog(logger),
+)
 
-err := o.Cancel()
-
-if err != nil {
-  //Oh well
-}
+// now client will use the provided logger...
 ```

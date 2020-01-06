@@ -30,15 +30,17 @@ historicalData, _ := robinhood.GetHistoricals(
 
 ```go
 import (
-  "github.com/blend/go-sdk/logger
+  "github.com/blend/go-sdk/logger"
 )
 
-logger := logger.MustNew()
+func main() {
+  logger := logger.MustNew()
 
-client, _ := robinhood.NewClient(
-  robinhood.NewOAuth("username", "password"),
-  robinhood.OptClientLog(logger),
-)
+  client, _ := robinhood.NewClient(
+    robinhood.NewOAuth("username", "password"),
+    robinhood.OptClientLog(logger),
+  )
 
-// now client will use the provided logger...
+  // now client will use the provided logger...
+}
 ```

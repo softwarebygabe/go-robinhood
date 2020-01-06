@@ -16,6 +16,18 @@ import (
 	"golang.org/x/oauth2"
 )
 
+// assert that our Client implements our choice set of interfaces
+var (
+	_ AccountGetter      = (*Client)(nil)
+	_ InstrumentGetter   = (*Client)(nil)
+	_ OrderManager       = (*Client)(nil)
+	_ FundamentalsGetter = (*Client)(nil)
+	_ QuoteGetter        = (*Client)(nil)
+	_ HistoricalGetter   = (*Client)(nil)
+	_ PositionsGetter    = (*Client)(nil)
+	_ WatchlistGetter    = (*Client)(nil)
+)
+
 // Endpoints for the Robinhood API
 const (
 	EPBase         = "https://api.robinhood.com/"

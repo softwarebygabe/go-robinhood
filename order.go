@@ -161,6 +161,11 @@ func (o *OrderOutput) Update() error {
 	return o.client.GetAndDecode(o.URL, o)
 }
 
+// UpdateOrder updates the given order
+func (c *Client) UpdateOrder(o *OrderOutput) error {
+	return c.GetAndDecode(o.URL, o)
+}
+
 // Cancel attempts to cancel an odrer
 func (o OrderOutput) Cancel() error {
 	post, err := http.NewRequest("POST", o.CancelURL, nil)
@@ -177,6 +182,26 @@ func (o OrderOutput) Cancel() error {
 	if o2.RejectReason != "" {
 		return errors.New(o2.RejectReason)
 	}
+	return nil
+}
+
+// CancelOrder cancels the given order
+func (c *Client) CancelOrder(o *OrderOutput) error {
+	req, err := c.NewRequest("POST", o.CancelURL)
+	if err != nil {
+		return err
+	}
+
+	var o2 OrderOutput
+	err = c.DoAndDecode(req, &o2)
+	if err != nil {
+		return err
+	}
+
+	if o2.RejectReason != "" {
+		return fmt.Errorf("Robinhood reject reason: %s", o2.RejectReason)
+	}
+
 	return nil
 }
 
